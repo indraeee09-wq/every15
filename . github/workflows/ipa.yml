@@ -1,1 +1,19 @@
+name: iPhone IPA (free)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ipa:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: unzip -oq Every15-iOS.zip
+      - run: bash Every15/ci/unsigned-ipa.sh
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "ipa-${{ github.run_number }}" Every15.ipa --title "Every15 IPA ${{ github.run_number }}" --notes "Open in SideStore to install" --latest
 
